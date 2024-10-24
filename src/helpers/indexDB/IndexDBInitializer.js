@@ -16,7 +16,8 @@ class IndexedDBInitializer {
                 const db = e.target.result;
 
                 if (!db.objectStoreNames.contains('providers')) {
-                    db.createObjectStore('providers', { autoIncrement: true });
+                    const providersObjectStore = db.createObjectStore('providers', { autoIncrement: true });
+                    providersObjectStore.createIndex("token", "token", { unique: true });
                 }
 
                 if (!db.objectStoreNames.contains('cards')) {

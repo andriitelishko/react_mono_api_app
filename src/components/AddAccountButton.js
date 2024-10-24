@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import AddAccountModal from "./AddAccountModal";
+import Button from "./custom/Button";
 
 function AddAccountButton () {
     const [showModal, setShowModal] = useState(false);
@@ -13,12 +14,10 @@ function AddAccountButton () {
         setShowModal(false);
     }
 
-    return <div className="container p-5 is-flex">
-               <div className="block mr-5">
-                   <button className="button is-link is-small is-inline-flex mb-2" style={{height: 'fit-content'}} onClick={handleClick}>Додати аккаунт</button>
-               </div>
-               {showModal && <AddAccountModal onClose={handleModalClose}/>}
-           </div>
+    return <>
+            <Button handleClick={handleClick}>Додати аккаунт</Button>
+            {showModal && <AddAccountModal onClose={handleModalClose}/>}
+           </>
 };
 
 export default AddAccountButton;

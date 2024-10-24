@@ -11,8 +11,9 @@ class IndexedDBMgr {
 
     async getItemByID(id, storeName) {
         try {
-            const store = await this.getObjectStore(storeName);
-            const request = store.get(id);
+            const store = await this.getObjectStore(storeName, 'readwrite');
+            const index = store.index('token');
+            const request = index.get(id);
 
             return new Promise((resolve, reject) => {
                 request.onsuccess = () => {
@@ -30,8 +31,13 @@ class IndexedDBMgr {
 
     async saveItem(item, storeName) {
         try {
-            const store = await this.getObjectStore(storeName, 'readwrite');
+             const existingItem = await this.getItemByID(item.token, storeName);
 
+            if (existingItem) {
+                return Promise.reject(`Item with token ${item.token} already exists in ${storeName}`);
+            }
+
+            const store = await this.getObjectStore(storeName, 'readwrite');
             store.put(item);
 
             return new Promise((resolve, reject) => {

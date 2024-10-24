@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import Error from "./Error";
@@ -11,16 +11,8 @@ function MonoProviderContent ({ onClose }) {
     const [accountID, setAccountID] = useState('');
     const [error, setError] = useState(null);
     const [accountsLoading, setAccountsLoading] = useState(false);
-    // const [dbManager, setDbManager] = useState(null)
 
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     const initDB = async () => {
-    //         return await useDB();
-    //     }
-    // }, [])
-
     const db = useDB();
 
     const handleInputChange = (e, input) => {
@@ -48,20 +40,16 @@ function MonoProviderContent ({ onClose }) {
 
     const handleAccountAdding = async () => {
         if (!accountName || !accountID) {
-            setError(configs.ERRORS.EMPTY_FIELDS);
+            setError(configs.errors.EMPTY_FIELDS);
             return;
         }
 
-        let params;
-        params = {
+        const provider = ProviderMgr.getProvider('mono', {
             token: accountID,
-            name: accountName,
-            providerID: 'mono',
-        }
-
-        const provider = ProviderMgr.getProvider('mono', params);
+            name: accountName
+        });
         if (!provider) {
-            setError(configs.ERRORS.BAD_PROVIDER);
+            setError(configs.errors.BAD_PROVIDER);
             return;
         }
 
@@ -70,7 +58,7 @@ function MonoProviderContent ({ onClose }) {
 
         if (!newAccounts) {
             setAccountID("");
-            setError(configs.ERRORS.BAD_ACCOUNT);
+            setError(configs.errors.BAD_ACCOUNT);
             setAccountsLoading(false);
             return;
         }
@@ -79,12 +67,18 @@ function MonoProviderContent ({ onClose }) {
             name: accountName,
             token: accountID,
             provider: 'mono',
-            cards: newAccounts
         }
 
-        setAccountsLoading(false);
-        onClose();
-        navigate('/accounts');
+        try {
+            await db.saveItem(newBankAccount, 'providers');
+            setAccountsLoading(false);
+            onClose();
+            navigate('/accounts');
+        } catch (error) {
+            setError(configs.errors.ACCOUNT_EXISTS);
+            console.error(error)
+            setAccountsLoading(false);
+        }
     };
 
     return (

@@ -9,7 +9,6 @@ function AccountPage () {
     return <>
        <h1>Accounts Page</h1>
        <AddAccountButton />
-       {accounts && <pre>{JSON.stringify(accounts, null, 4)}</pre>}
     </>
 }
 

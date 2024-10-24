@@ -8,7 +8,7 @@ function useDB() {
 
     useEffect(() => {
         const dbInitializer = IndexedDBInitializer;
-    dbInitializer.init().then(() => {
+        dbInitializer.init().then(() => {
         setDB(new IndexedDBMgr(dbInitializer))
     });
     }, [])
